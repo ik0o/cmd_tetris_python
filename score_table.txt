@@ -1,0 +1,5 @@
+VLAD | score: 2200 
+GUM | score: 1520 
+AAA | score: 180 
+--- | score: 0 
+--- | score: 0 
