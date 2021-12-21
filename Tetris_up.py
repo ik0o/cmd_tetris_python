@@ -22,60 +22,50 @@ class Tetris_piece():
                 os.system('cls||clear')
                 break
     def Left(self):
+        DO = True
         for y,x in self.cordinate:
-            new[y] = new[y][:x] + "-" + new[y][x+1:]
-        for y,x in self.cordinate:
-            new[y] = new[y][:x-1] + "#" + new[y][x:]
-            if (old[y].count("@") > new[y].count("@")) or (len(new[y]) > len(old[y])):
-                for i in range(len(new)):
-                    new[i] = old[i]
-                    new[i] = new[i].replace("#","-")
-                for i,j in self.cordinate:
-                    new[i] = new[i][:j] + "#" + new[i][j+1:]
+            if new[y][x-1] == "@" or x-1 < 0:
+                DO = False
                 break
-            elif self.cordinate[-1] == [y,x]:
-                for i in range(len(self.cordinate)):
-                    for j in range(1,len(self.cordinate[i])):
-                        self.cordinate[i][j] -= 1
-                if len(self.center) != 0:
-                    self.center[1] -= 1
+        if DO:
+            for y,x in self.cordinate:
+                new[y] = new[y][:x] + "-" + new[y][x+1:]
+            for y,x in self.cordinate:
+                new[y] = new[y][:x-1] + "#" + new[y][x:]    
+            for i in range(len(self.cordinate)):
+                self.cordinate[i][1] -= 1
+            if len(self.center) != 0:
+                self.center[1] -= 1
     def Right(self): 
+        DO = True
         for y,x in self.cordinate:
-            new[y] = new[y][:x] + "-" + new[y][x+1:]
-        for y,x in self.cordinate:
-            new[y] = new[y][:x+1] + "#" + new[y][x+2:]
-            if (old[y].count("@") > new[y].count("@")) or (len(new[y]) > len(old[y])):
-                for i in range(len(new)):
-                    new[i] = old[i]
-                    new[i] = new[i].replace("#","-")
-                for i,j in self.cordinate:
-                    new[i] = new[i][:j] + "#" + new[i][j+1:]
+            if x+1 >= len(new[0]) or new[y][x+1] == "@":
+                DO = False
                 break
-            elif self.cordinate[-1] == [y,x]:
-                for i in range(len(self.cordinate)):
-                    for j in range(1,len(self.cordinate[i])):
-                        self.cordinate[i][j] += 1
-                if len(self.center) != 0:
-                    self.center[1] += 1
+        if DO:
+            for y,x in self.cordinate:
+                new[y] = new[y][:x] + "-" + new[y][x+1:]
+            for y,x in self.cordinate:
+                new[y] = new[y][:x+1] + "#" + new[y][x+2:]    
+            for i in range(len(self.cordinate)):
+                self.cordinate[i][1] += 1
+            if len(self.center) != 0:
+                self.center[1] += 1
     def Down(self):
+        DO = True
         for y,x in self.cordinate:
-            new[y] = new[y][:x] + "-" + new[y][x+1:] 
-        for y,x in self.cordinate:
-            if y+1 > len(new)-1:
-                for i in range(len(new)):
-                    new[i] = old[i]
+            if y+1 >= len(new) or new[y+1][x] == "@":
+                DO = False
                 break
-            else:
-                new[y+1] = new[y+1][:x] + "#" + new[y+1][x+1:]
-            if old[y+1].count("@") > new[y+1].count("@") :
-                for i in range(len(new)):
-                    new[i] = old[i]
-                break
-            elif self.cordinate[-1] == [y,x]:
-                for i in range(len(self.cordinate)):
-                    self.cordinate[i][0] += 1
-                if len(self.center) != 0:
-                    self.center[0] += 1
+        if DO:
+            for y,x in self.cordinate:
+                new[y] = new[y][:x] + "-" + new[y][x+1:]
+            for y,x in self.cordinate:
+                new[y+1] = new[y+1][:x] + "#" + new[y+1][x+1:]    
+            for i in range(len(self.cordinate)):
+                self.cordinate[i][0] += 1
+            if len(self.center) != 0:
+                self.center[0] += 1
     def Rotate_clock(self):
         loc_cor = []
         for y,x in self.cordinate:
@@ -94,7 +84,7 @@ class Tetris_piece():
                     new[i] = new[i][:j] + "#" + new[i][j+1:]
                 break
             new[self.center[0]-(y*-1)] = new[self.center[0]-(y*-1)][:(self.center[1]+x)] + "#" + new[self.center[0]-(y*-1)][(self.center[1]+x)+1:]
-            if (old[self.center[0]-(y*-1)].count("@") > new[self.center[0]-(y*-1)].count("@")) or (len(new[self.center[0]-(y*-1)]) > len(old[self.center[0]-(y*-1)])) or (self.center[0]+y < 0):
+            if (old[self.center[0]+y].count("@") > new[self.center[0]+y].count("@")) or (len(new[self.center[0]+y]) > len(old[self.center[0]+y])) or (self.center[0]+y < 0):
                 for i in range(len(new)):
                     new[i] = old[i]
                     new[i] = new[i].replace("#","-")
@@ -103,7 +93,7 @@ class Tetris_piece():
                 break
             elif loc_cor[-1] == [y,x]:
                 for i,j in loc_cor:
-                    self.cordinate[loc_cor.index([i,j])] = [self.center[0]-(i*-1), (self.center[1]+j)]
+                    self.cordinate[loc_cor.index([i,j])] = [self.center[0]+i, (self.center[1]+j)]
     def Rotate_counterclock(self):
         loc_cor = []
         for y,x in self.cordinate:
@@ -251,4 +241,4 @@ while True:
             Tetris.Clean_line()
             update_lvl()
             break
-        elif Tetris.Check_end(): end += 1
+        elif Tetris.Check_end(): end += 1 
